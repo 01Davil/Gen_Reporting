@@ -18,17 +18,17 @@ public partial class CreatePassword : System.Web.UI.Page
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-       string p1 = TextBox1.Text;
-       string p2 = TextBox2.Text;
+        string p1 = TextBox1.Text;
+        string p2 = TextBox2.Text;
         string Email = "";
-        if (p1.Length == 0 || p2.Length== 0 || p1 == " " || p2 == " ")
+        if (p1.Length == 0 || p2.Length == 0 || p1 == " " || p2 == " ")
         {
             string s = "Please enter and confirm your password.";
             ScriptManager.RegisterStartupScript(this, typeof(Page), "Alert", "<script>ShowError('" + s + "')</script>", false);
         }
         else
         {
-            if(p1 != p2)
+            if (p1 != p2)
             {
                 string s1 = "Please enter the same password in both fields.";
                 ScriptManager.RegisterStartupScript(this, typeof(Page), "Alert", "<script>ShowError('" + s1 + "')</script>", false);
@@ -38,7 +38,7 @@ public partial class CreatePassword : System.Web.UI.Page
                 SqlConnection con = new SqlConnection(conn);
                 con.Open();
                 SqlCommand cmd = new SqlCommand("Master_CreatePassword", con);
-                cmd.Parameters.Add("@NewPass", SqlDbType.VarChar).Value =p1;
+                cmd.Parameters.Add("@NewPass", SqlDbType.VarChar).Value = p1;
                 cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = Sno;
                 cmd.Parameters.Add("@Email", SqlDbType.Char, 100);
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -46,7 +46,7 @@ public partial class CreatePassword : System.Web.UI.Page
                 cmd.ExecuteNonQuery();
                 Email = (string)cmd.Parameters["@Email"].Value;
                 con.Close();
-                Email=Email.Replace(" ", "");
+                Email = Email.Replace(" ", "");
                 SendEmailBg(Email, "You have successfully Generated a Password", "Password Generated");
             }
 

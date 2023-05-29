@@ -1,5 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ForGetPassword.aspx.cs" Inherits="ForGetPassword" %>
 
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -109,8 +110,6 @@
             </main>
         </div>
         <script src="JsDB/jquery.js"></script>
-        <script src="JsDB/bootstrap.js"></script>
-        <script src="JsDB/javascript.js"></script>
         <script src="JsDB/popper.min.js"></script>
         <script src="js/app.js"></script>
         <script src="vendor/sweetalert2.all.min.js"></script>
@@ -145,14 +144,16 @@
                             formData.append("Sno", Sno);
                             formData.append("Pass", Pass);
                             $.ajax({
-                                url: 'https://genesiscloudapps.com/Gen_Reporting/GenReporting/WebServerFile/CreatePasswordServer.asmx/ForGetPass',
+                             //   url: 'https://genesiscloudapps.com/Gen_Reporting/GenReporting/WebServerFile/CreatePasswordServer.asmx/ForGetPass',
+                                url: 'WebServerFile/CreatePasswordServer.asmx/ForGetPass',
                                 type: 'POST',
                                 data: formData,
                                 cache: false,
                                 contentType: false,
                                 processData: false,
                                 success: function (data) {
-                                    if (data == "1") {
+                                   
+                                    if (data == "0" || data== 0) {
                                         oo = {
                                             Sno: Sno
                                         }
@@ -163,17 +164,19 @@
                                             contentType: "application/json; charset=utf-8",
                                             dataType: "json",
                                             success: function (r) {
+                                                //alert(r);
                                                 Swal.fire({
                                                     icon: 'success',
                                                     title: 'success',
                                                     width: '300px',
                                                     text: 'Password Forget  successfully!'
                                                 });
+
+                                                setTimeout(function () {
+                                                    location.replace("LoginPage.aspx");
+                                                }, 1000);
                                             }
                                         });
-                                        setTimeout(function () {
-                                            location.replace("LoginPage.aspx");
-                                        }, 1000);
                                     } else {
                                         Swal.fire({
                                             icon: 'error',

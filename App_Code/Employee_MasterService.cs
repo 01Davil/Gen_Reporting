@@ -356,341 +356,10 @@ public class Employee_MasterService : System.Web.Services.WebService
         Context.Response.Write(resultJSON);
 
     }
-    [WebMethod]
-    public void SaveExpenese()
-    {
-        string Result = "";
-        string Sno = HttpContext.Current.Request.Form["Sno"];
-        string Ampunt = HttpContext.Current.Request.Form["Ampunt"];
-        string Purpose = HttpContext.Current.Request.Form["Purpose"];
-        string TypeExp = HttpContext.Current.Request.Form["TypeExp"];
-        string Gpath = HttpContext.Current.Server.MapPath("~/UploadFile/ExpenesesFile/");
-        if (!Directory.Exists(Gpath))
-        {
-            Directory.CreateDirectory(Gpath);
-        }
-        int fileCount = Directory.GetFiles(Gpath, "*.*", SearchOption.AllDirectories).Length;
-        HttpPostedFile postedFile = HttpContext.Current.Request.Files[0];
-        string UName = Sno + fileCount + Path.GetExtension(postedFile.FileName);
-        string MPath = Gpath + UName;
-        postedFile.SaveAs(MPath);
-        UName = "https://genesiscloudapps.com/Gen_Reporting/GenReporting/UploadFile/ExpenesesFile/" + UName;
-        // 
-        try
-        {
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(conn);
-            con.Open();
-            cmd = new SqlCommand("Emp_SetExpenese", con);
-            cmd.Parameters.AddWithValue("@Sno", Sno);
-            cmd.Parameters.AddWithValue("@Amount", Ampunt);
-            cmd.Parameters.AddWithValue("@Purpose", Purpose);
-            cmd.Parameters.AddWithValue("@TypeExp", TypeExp);
-            cmd.Parameters.AddWithValue("@Url", UName);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Result = "Save";
-        }
-        catch (SqlException)
-        {
-            Result = "Not";
-        }
-        HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.OK;
-        HttpContext.Current.Response.Write(Result);
-        HttpContext.Current.Response.Flush();
-    }
-
-    //
-    [WebMethod]
-    public void UpdateExpeneseSP()
-    {
-        string Result = "";
-        string Sno = HttpContext.Current.Request.Form["Sno"];
-        string Ampunt = HttpContext.Current.Request.Form["Ampunt"];
-        string Purpose = HttpContext.Current.Request.Form["Purpose"];
-        string ID = HttpContext.Current.Request.Form["Id"];
-        try
-        {
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(conn);
-            con.Open();
-            cmd = new SqlCommand("Emp_UpdateExpenese", con);
-            cmd.Parameters.AddWithValue("@Sno", Sno);
-            cmd.Parameters.AddWithValue("@Amount", Ampunt);
-            cmd.Parameters.AddWithValue("@Purpose", Purpose);
-            cmd.Parameters.AddWithValue("@Url", "NA");
-            cmd.Parameters.AddWithValue("@Id", ID);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Result = "Save";
-        }
-        catch (SqlException)
-        {
-            Result = "Not";
-        }
-        HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.OK;
-        HttpContext.Current.Response.Write(Result);
-        HttpContext.Current.Response.Flush();
-    }
-    [WebMethod]
-    public void UpdateExpenese()
-    {
-        string Result = "";
-        string Sno = HttpContext.Current.Request.Form["Sno"];
-        string Ampunt = HttpContext.Current.Request.Form["Ampunt"];
-        string Purpose = HttpContext.Current.Request.Form["Purpose"];
-        string ID = HttpContext.Current.Request.Form["Id"];
-        string Gpath = HttpContext.Current.Server.MapPath("~/UploadFile/ExpenesesFile/");
-        if (!Directory.Exists(Gpath))
-        {
-            Directory.CreateDirectory(Gpath);
-        }
-        int fileCount = Directory.GetFiles(Gpath, "*.*", SearchOption.AllDirectories).Length;
-        HttpPostedFile postedFile = HttpContext.Current.Request.Files[0];
-        string UName = Sno + fileCount + Path.GetExtension(postedFile.FileName);
-        string MPath = Gpath + UName;
-        postedFile.SaveAs(MPath);
-        UName = "https://genesiscloudapps.com/Gen_Reporting/GenReporting/UploadFile/ExpenesesFile/" + UName;
-        // 
-        try
-        {
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(conn);
-            con.Open();
-            cmd = new SqlCommand("Emp_UpdateExpenese", con);
-            cmd.Parameters.AddWithValue("@Sno", Sno);
-            cmd.Parameters.AddWithValue("@Amount", Ampunt);
-            cmd.Parameters.AddWithValue("@Purpose", Purpose);
-            cmd.Parameters.AddWithValue("@Url", UName);
-            cmd.Parameters.AddWithValue("@Id", ID);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Result = "Save";
-        }
-        catch (SqlException)
-        {
-            Result = "Not";
-        }
-        HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.OK;
-        HttpContext.Current.Response.Write(Result);
-        HttpContext.Current.Response.Flush();
-    }
-
-    [WebMethod]
-    public void GetApplyExpeneseSP()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            string s = HttpContext.Current.Request.Form["Sno"];
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Emp_GetApplyExpenese", con);
-            cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
-            cmd.Parameters.Add("@Type", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Type"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
-    // 
-    [WebMethod]
-    public void DeleteExpenese()
-    {
-        string Result = "";
-        try
-        {
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(conn);
-            con.Open();
-            cmd = new SqlCommand(" delete from Apply_Expenese where id = '" + HttpContext.Current.Request.Form["id"] + "'", con);
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Result = "Save";
-        }
-        catch (SqlException)
-        {
-            Result = "Not";
-        }
-        HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.OK;
-        HttpContext.Current.Response.Write(Result);
-        HttpContext.Current.Response.Flush();
-    }
+   
     ///
-    [WebMethod]
-    public void GetEmployeeAssignDetails()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Emp_GetMyTask", con);
-            cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
-            cmd.Parameters.Add("@Type", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Type"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
-    [WebMethod]
-    public void UpdateAssignWork()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Emp_UpdateAssignTask", con);
-            cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
-            cmd.Parameters.Add("@Id", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Id"];
-            cmd.Parameters.Add("@Type", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Type"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
+    
+    
     ////
 
     [WebMethod]
@@ -766,215 +435,12 @@ public class Employee_MasterService : System.Web.Services.WebService
         Context.Response.Write(resultJSON);
 
     }
-    [WebMethod]
-    public void SaveAssignWork()
-    {
-        int UserTypeId;
-        try
-        {
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(conn);
-            con.Open();
-            cmd = new SqlCommand("Emp_SetAssignWork", con);
-            cmd.Parameters.AddWithValue("@WorkEmail", HttpContext.Current.Request.Form["WorkEmail"]);
-            cmd.Parameters.AddWithValue("@ProjectName", HttpContext.Current.Request.Form["ProjectName"]);
-            cmd.Parameters.AddWithValue("@TaskName", HttpContext.Current.Request.Form["TaskName"]);
-            cmd.Parameters.AddWithValue("@TaskDeaDline", HttpContext.Current.Request.Form["TaskDeaDline"]);
-            cmd.Parameters.AddWithValue("@TaskDetails", HttpContext.Current.Request.Form["TaskDetails"]);
-            cmd.Parameters.AddWithValue("@AssignEmail", HttpContext.Current.Request.Form["AssignEmail"]);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            UserTypeId = 1;
-        }
-        catch (SqlException)
-        {
-            UserTypeId = 404;
-        }
-        HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.OK;
-        HttpContext.Current.Response.Write(UserTypeId);
-        HttpContext.Current.Response.Flush();
-    }
-    [WebMethod]
-    public void GetNameList()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Master_GetEmployeeName", con);
-            cmd.Parameters.Add("@Name", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Num"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
+    
+   
 
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
+    
 
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
-
-    [WebMethod]
-    public void GetEmployeeDetails()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Emp_GetEmployeeDetailsWork", con);
-            cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Num"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-    }
-
-    [WebMethod]
-    public void GetEmployeeAssignWorkList()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Emp_GetAssignWork", con);
-            cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
-            cmd.Parameters.Add("@EmpEmail", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["EmpEmail"];
-            cmd.Parameters.Add("@Type", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Type"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
+   
     [WebMethod]
     public void GetEmployeeLeaveSummery()
     {
@@ -1082,7 +548,6 @@ public class Employee_MasterService : System.Web.Services.WebService
             SqlCommand cmd = new SqlCommand("Emp_GetWFHSummery", con);
             cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
             cmd.Parameters.Add("@Emp", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Emp"];
-            cmd.Parameters.Add("@MonthNo", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["MonthNo"];
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet ds = new DataSet();
@@ -1164,129 +629,9 @@ public class Employee_MasterService : System.Web.Services.WebService
     }
 
     /// Get Employee Event Lsit 
-    [WebMethod]
-    public void Get_EventList()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        string s = HttpContext.Current.Request.Form["Sno"];
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Today_EventList", con);
-            //cmd.Parameters.Add("@Sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
+   
     // get Meeting List
-    [WebMethod]
-    public void Get_MeetingList()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        string s = HttpContext.Current.Request.Form["Sno"];
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Master_GetMeeting", con);
-            cmd.Parameters.Add("@SNO", s);
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-
-    }
+   
 
 
     // get Holi day list Month by
@@ -1412,66 +757,7 @@ public class Employee_MasterService : System.Web.Services.WebService
         }
         Context.Response.Write(resultJSON);
     }
-    // get type of expenese
-    [WebMethod]
-    public void TypeofExpenese()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        string s = HttpContext.Current.Request.Form["Sno"];
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Get_Type_of_Expenese", con);
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
-
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
-
-            }
-        }
-
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-    }
+    
     // Get_Leave
     [WebMethod]
     public void Get_Leave()
@@ -1655,65 +941,65 @@ public class Employee_MasterService : System.Web.Services.WebService
         Context.Response.Write(resultJSON);
     }
     // get tender list 
-    [WebMethod]
-    public void Get_TenderList()
-    {
-        DataTable dt;
-        SqlConnection con = new SqlConnection(conn);
-        String resultJSON = "";
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        try
-        {
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Emp_Dash_TenderList", con);
-            cmd.Parameters.Add("@sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
-            cmd.CommandType = CommandType.StoredProcedure;
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
-            dt = new DataTable();
-            dt = ds.Tables[0];
+    //[WebMethod]
+    //public void Get_TenderList()
+    //{
+    //    DataTable dt;
+    //    SqlConnection con = new SqlConnection(conn);
+    //    String resultJSON = "";
+    //    JavaScriptSerializer js = new JavaScriptSerializer();
+    //    JavaScriptSerializer serializer = new JavaScriptSerializer();
+    //    try
+    //    {
+    //        Context.Response.Clear();
+    //        Context.Response.ContentType = "application/json";
+    //        con.Open();
+    //        SqlCommand cmd = new SqlCommand("Emp_Dash_TenderList", con);
+    //        cmd.Parameters.Add("@sno", SqlDbType.VarChar).Value = HttpContext.Current.Request.Form["Sno"];
+    //        cmd.CommandType = CommandType.StoredProcedure;
+    //        SqlDataAdapter da = new SqlDataAdapter(cmd);
+    //        DataSet ds = new DataSet();
+    //        da.Fill(ds);
+    //        dt = new DataTable();
+    //        dt = ds.Tables[0];
 
-            List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
-            Dictionary<String, Object> row;
-            row = new Dictionary<string, object>();
-            if (dt.Rows.Count > 0)
-            {
+    //        List<Dictionary<String, Object>> tableRows = new List<Dictionary<string, object>>();
+    //        Dictionary<String, Object> row;
+    //        row = new Dictionary<string, object>();
+    //        if (dt.Rows.Count > 0)
+    //        {
 
-                foreach (DataRow dr in dt.Rows)
-                {
-                    row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        row.Add(col.ColumnName, dr[col].ToString());
-                    }
-                    tableRows.Add(row);
-                }
-                resultJSON = serializer.Serialize(tableRows).ToString();
+    //            foreach (DataRow dr in dt.Rows)
+    //            {
+    //                row = new Dictionary<string, object>();
+    //                foreach (DataColumn col in dt.Columns)
+    //                {
+    //                    row.Add(col.ColumnName, dr[col].ToString());
+    //                }
+    //                tableRows.Add(row);
+    //            }
+    //            resultJSON = serializer.Serialize(tableRows).ToString();
 
-            }
-            else
-            {
-                row.Add("response", "Fail");
-                tableRows.Add(row);
-                resultJSON = serializer.Serialize(tableRows).ToString();
+    //        }
+    //        else
+    //        {
+    //            row.Add("response", "Fail");
+    //            tableRows.Add(row);
+    //            resultJSON = serializer.Serialize(tableRows).ToString();
 
-            }
-        }
+    //        }
+    //    }
 
-        catch (Exception ex)
-        {
-            resultJSON = ex.Message.ToString();
-        }
-        finally
-        {
-            con.Close();
-        }
-        Context.Response.Write(resultJSON);
-    }
+    //    catch (Exception ex)
+    //    {
+    //        resultJSON = ex.Message.ToString();
+    //    }
+    //    finally
+    //    {
+    //        con.Close();
+    //    }
+    //    Context.Response.Write(resultJSON);
+    //}
     // UpdateWFHStatus
 
     [WebMethod]
@@ -1743,6 +1029,9 @@ public class Employee_MasterService : System.Web.Services.WebService
         HttpContext.Current.Response.Write(UserTypeId);
         HttpContext.Current.Response.Flush();
     }
+
+
+
     /// <summary>
     /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// </summary>

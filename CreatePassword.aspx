@@ -1,4 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="CreatePassword.aspx.cs" Inherits="CreatePassword" EnableEventValidation="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="CreatePassword.aspx.cs" Inherits="CreatePassword" %>
+
 
 <!DOCTYPE html>
 
@@ -82,15 +83,14 @@
                                             <div class="text-center mb-4">
                                                 <h2 class="cv">Set Your Password</h2>
                                             </div>
-                                            <form>
                                                 <div class="mb-3">
                                                     <label class="form-label">Enter New Password</label>
-                                                    <asp:TextBox ID="TextBox1" runat="server" CssClass="form-control form-control-lg"></asp:TextBox>
+                                                    <asp:TextBox ID="TextBox1" runat="server" TextMode="Password" CssClass="form-control form-control-lg"></asp:TextBox>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Confirm Password</label>
                                                     <%--   <input class="form-control form-control-lg" type="password" id="ConPass" name="" placeholder="Confirm password" />--%>
-                                                    <asp:TextBox ID="TextBox2" runat="server" CssClass="form-control form-control-lg"></asp:TextBox>
+                                                    <asp:TextBox ID="TextBox2"  TextMode="Password" runat="server" CssClass="form-control form-control-lg"></asp:TextBox>
                                                 </div>
                                                 <h5 id="txtca"></h5>
 
@@ -98,7 +98,7 @@
                                                     <%--                                                <button type="submit" id="btnSet" class="" style="">Set Password</button>--%>
                                                     <asp:Button ID="Button1" CssClass="btn btn-lg btn-primary b" OnClick="Button1_Click" runat="server" Text="Set Password" />
                                                 </div>
-                                            </form>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -109,9 +109,10 @@
                 </div>
             </main>
         </div>
-        <script src="JsDB/jquery.js"></script>
-        <script src="JsDB/bootstrap.js"></script>
-        <script src="JsDB/javascript.js"></script>
+       
+    </form>
+</body>
+     <script src="JsDB/jquery.js"></script>
         <script src="JsDB/popper.min.js"></script>
         <script src="js/app.js"></script>
         <script src="vendor/sweetalert2.all.min.js"></script>
@@ -147,8 +148,5 @@
                 return false;
             }
         </script>
-    </form>
-</body>
 </html>
-
 

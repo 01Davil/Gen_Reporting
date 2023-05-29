@@ -56,7 +56,7 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Password</label>
                                                 <%--<asp:TextBox ID="TextBox2" runat="server"  CssClass="form-control form-control-lg" TextMode="Password"></asp:TextBox>--%>
-                                                <input type="text" class="form-control form-control-lg" id="PasswordText" />
+                                                <input type="password" class="form-control form-control-lg" id="PasswordText" />
 
                                             </div>
                                             <div class="mb-3">
@@ -88,7 +88,6 @@
                 </div>
             </main>
         </div>
-
         <div id="splash" class="splash">
             <div class="mdv">
                 <img src="img/Gen.png">
@@ -119,9 +118,12 @@
             function createCaptcha() {
                 //clear the contents of captcha div first 
                 document.getElementById('captcha').innerHTML = "";
-                var charsArray =
-                "0123456789abcdefghijklmnopqrstuvwxyz.~`)(*&^%$#@!~=-][}{';/.,?><ABCDEFGHIJKLMNOPQRSTUVWXYZ@!#$%^&*";
-                var lengthOtp = 6;
+               // var charsArray = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                //var charsArray = "abc2235de65fgh8ijklmn08087opqrstuv65476wxyzABCDE56FGH9IJ6KL0MNO5PQR7ST9UV0WXYZ";
+                var charsArray = "012345678900987654321";
+
+                var lengthOtp = 4;
+                //var lengthOtp = 1;
                 var captcha = [];
                 for (var i = 0; i < lengthOtp; i++) {
                     //below code will not allow Repetition of Characters
@@ -160,7 +162,7 @@
                 var formData = new FormData();
                 formData.append("Num", $("#SearchText").val());
                 $.ajax({
-                    url: 'WebServerFile/Employee_MasterService.asmx/GetNameList',
+                    url: 'WebServerFile/WebService.asmx/Get_EmployeOfficeEmailList',
                     type: 'POST',
                     data: formData,
                     cache: false,
@@ -314,7 +316,7 @@
                                             LoginRoleId = data[0].Roleid;
                                             // start 1.1
                                             if (LoginType == 400 || LoginType == "400") {
-                                                window.open("CreatePassword.aspx?Sno=" + LoginSno);
+                                                location.replace("CreatePassword.aspx?Sno=" + LoginSno);
                                             }
                                             else if (LoginType == 404 || LoginType == "404") {
                                                 Swal.fire({
@@ -348,7 +350,8 @@
                                                     LoginName: LoginName,
                                                     LoginEmail: LoginEmail,
                                                     LoginImage: LoginImage,
-                                                    LoginRoleId: LoginRoleId
+                                                    LoginRoleId: LoginRoleId,
+                                                    LoginType: LoginType
                                                 }
                                                 $.ajax({
                                                     type: "POST",
@@ -357,18 +360,19 @@
                                                     contentType: "application/json; charset=utf-8",
                                                     dataType: "json",
                                                     success: function (r) {
-                                                        if (LoginType == 101 || LoginType == "101") {
-                                                            location.replace("AdminHomePage.aspx");
-                                                        }
-                                                        else if (LoginType == 102 || LoginType == "102") {
-                                                            location.replace("Hr_HomePage.aspx");
-                                                        }
-                                                        else if (LoginType == 103 || LoginType == "103") {
-                                                            location.replace("Finance_HomePage.aspx");
-                                                        }
-                                                        else {
-                                                            location.replace("Emp_HomePage.aspx");
-                                                        }
+                                                        //if (LoginType == 101 || LoginType == "101") {
+                                                          location.replace("Dashboard.aspx");
+                                                        //    location.replace("ManagementDashboard.aspx");
+                                                        //}
+                                                        //else if (LoginType == 102 || LoginType == "102") {
+                                                        //    location.replace("HRDashboard.aspx");
+                                                        //}
+                                                        //else if (LoginType == 103 || LoginType == "103") {
+                                                        //    location.replace("FinanceDashboard.aspx");
+                                                        //}
+                                                        //else {
+                                                        //    location.replace("EmployeeDashboard.aspx");
+                                                        //}
                                                     }
                                                 });
 

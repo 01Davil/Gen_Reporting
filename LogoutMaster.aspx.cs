@@ -14,7 +14,14 @@ public partial class LogoutMaster : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        fun();
+        if (Session["LoginSno"] == null || Session["LoginIDMax"] == null || Session["LoginEmpCode"] == null || Session["LoginName"] == null || Session["LoginEmail"] == null || Session["LoginImage"] == null || Session["LoginRoleId"] == null)
+        {
+            Response.Redirect("LoginPage.aspx");
+        }
+        else
+        {
+            fun();
+        }
     }
     
     public void fun()

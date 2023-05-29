@@ -12,10 +12,10 @@ using System.Web.UI.WebControls;
 
 public partial class ForGetPassword : System.Web.UI.Page
 {
-        private static String conn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+    private static String conn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
     protected void Page_Load(object sender, EventArgs e)
     {
-        
+
     }
     // ForGetPassword
     [WebMethod]

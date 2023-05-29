@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Net;
 using System.Net.Mail;
-
+using System.Web.Services;
 
 public partial class EmailFile_PasswordEmail : System.Web.UI.Page
 {
-    string Mess = "You have successfully Generated a Password.";
-    string s= "Password Generated";
-    string Email = "nishant.k@genesis-in.com";
+    //string Mess = "You have successfully Generated a Password.";
+    //string s= "Password Generated";
+    //string Email = "nishant.k@genesis-in.com";
+
     protected void Page_Load(object sender, EventArgs e)
     {
-        SendEmailBg(Email,Mess,s);
+    //    SendEmailBg(Email,Mess,s);
     }
     public void SendEmailBg(string SendEmail,string Mess, string S)
     {
@@ -37,5 +38,15 @@ public partial class EmailFile_PasswordEmail : System.Web.UI.Page
                   + "<br></br> </div></head>  </body> ";
         smtp.Send(msg);
         msg.Dispose();
+    }
+
+
+    [WebMethod]
+    public static int sentEmailWeb(string Mess,string Sno ,string Email)
+    {
+        EmailFile_PasswordEmail obj = new EmailFile_PasswordEmail();
+
+        obj.SendEmailBg(Email, Mess, Sno);
+        return 1;
     }
 }
