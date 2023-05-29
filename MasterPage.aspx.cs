@@ -1,0 +1,171 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class MasterPage : System.Web.UI.Page
+{
+    private static String conn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+    public class classMonth
+    {
+        public string MonthNo { get; set; }
+        public string MonthName { get; set; }
+    }
+    [WebMethod]
+    public static List<classMonth> GetMonth()
+    {
+        DataTable dt = new DataTable();
+        DataSet ds = new DataSet();
+        try
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection con = new SqlConnection(conn);
+            con.Open();
+
+            cmd = new SqlCommand("Emp_GetMonth", con);
+            cmd.Parameters.AddWithValue("@Type", "WFH");
+            cmd.Parameters.AddWithValue("@YearNo", 0);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 4800;
+            con.Close();
+            SqlDataAdapter SDA = new SqlDataAdapter(cmd);
+            SDA.Fill(ds);
+            dt = ds.Tables[0];
+        }
+        catch (Exception s)
+        {
+            string ss = s.Message.ToString();
+        }
+        List<classMonth> Data = new List<classMonth>();
+
+        foreach (DataRow dtt in dt.Rows)
+        {
+            Data.Add(new classMonth
+            {
+                MonthNo = dtt["id"].ToString(),
+                MonthName = dtt["mname"].ToString(),
+            });
+        }
+
+        return Data;
+    }
+
+    // GetMonthWithYear
+    [WebMethod]
+    public static List<classMonth> GetMonthWithYear(string YearNo)
+    {
+        DataTable dt = new DataTable();
+        DataSet ds = new DataSet();
+        try
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection con = new SqlConnection(conn);
+            con.Open();
+
+            cmd = new SqlCommand("Emp_GetMonth", con);
+            cmd.Parameters.AddWithValue("@Type", "Yearby");
+            cmd.Parameters.AddWithValue("@YearNo", YearNo);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 4800;
+            con.Close();
+            SqlDataAdapter SDA = new SqlDataAdapter(cmd);
+            SDA.Fill(ds);
+            dt = ds.Tables[0];
+        }
+        catch (Exception s)
+        {
+            string ss = s.Message.ToString();
+        }
+        List<classMonth> Data = new List<classMonth>();
+
+        foreach (DataRow dtt in dt.Rows)
+        {
+            Data.Add(new classMonth
+            {
+                MonthNo = dtt["id"].ToString(),
+                MonthName = dtt["mname"].ToString(),
+            });
+        }
+
+        return Data;
+    }
+
+    public class classYear
+    {
+        public string MonthNo { get; set; }
+        public string MonthName { get; set; }
+    }
+    [WebMethod]
+    public static List<classMonth> GetYear()
+    {
+        DataTable dt = new DataTable();
+        DataSet ds = new DataSet();
+        try
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection con = new SqlConnection(conn);
+            con.Open();
+
+            cmd = new SqlCommand("Emp_GetYear", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 4800;
+            con.Close();
+            SqlDataAdapter SDA = new SqlDataAdapter(cmd);
+            SDA.Fill(ds);
+            dt = ds.Tables[0];
+        }
+        catch (Exception s)
+        {
+            string ss = s.Message.ToString();
+        }
+        List<classMonth> Data = new List<classMonth>();
+
+        foreach (DataRow dtt in dt.Rows)
+        {
+            Data.Add(new classMonth
+            {
+                MonthNo = dtt["id"].ToString(),
+                MonthName = dtt["YearNo"].ToString(),
+            });
+        }
+
+        return Data;
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="MonthNo"></param>
+    /// <param name="Sno"></param>
+    /// <returns></returns>
+
+    [WebMethod]
+    public static string SalaryEmloyee(string MonthNo, string Sno,string YearNo)
+    {
+        try
+        {
+            SqlConnection con = new SqlConnection(conn);
+            string Sql = "select count(id) from Finance_SalaryHistory where YearNo="+ YearNo + " and Monthno=" + MonthNo + " and Sno=" + Sno;
+            SqlCommand cmd = new SqlCommand(Sql, con);
+            con.Open();
+            object usernameObj = cmd.ExecuteScalar();
+            return (usernameObj.ToString());
+        }
+        catch (SqlException)
+        {
+            return "No";
+        }
+    }
+}
