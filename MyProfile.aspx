@@ -83,6 +83,7 @@
         var formData = new FormData();
         formData.append("Slip", $("#EmpImage")[0].files[0]);
         formData.append("Sno",  "<%= Session["LoginSno"].ToString()%>");
+      //  formData.append("Name", $("#Name").val());
         $.ajax({
             url: 'WebServerFile/Hr_MasterWebService.asmx/UpdateImageEmp',
             type: 'POST',
